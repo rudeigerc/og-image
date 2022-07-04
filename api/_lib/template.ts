@@ -1,15 +1,10 @@
 
-import { readFileSync } from 'fs';
 import { marked } from 'marked';
 import { sanitizeHtml } from './sanitizer';
 import { ParsedRequest } from './types';
 const twemoji = require('twemoji');
 const twOptions = { folder: 'svg', ext: '.svg' };
 const emojify = (text: string) => twemoji.parse(text, twOptions);
-
-const rglr = readFileSync(`${__dirname}/../_fonts/Inter-Regular.woff2`).toString('base64');
-const bold = readFileSync(`${__dirname}/../_fonts/Inter-Bold.woff2`).toString('base64');
-const mono = readFileSync(`${__dirname}/../_fonts/Vera-Mono.woff2`).toString('base64');
 
 function getCss(theme: string, fontSize: string) {
     let background = 'white';
@@ -22,26 +17,7 @@ function getCss(theme: string, fontSize: string) {
         radial = 'dimgray';
     }
     return `
-    @font-face {
-        font-family: 'Inter';
-        font-style:  normal;
-        font-weight: normal;
-        src: url(data:font/woff2;charset=utf-8;base64,${rglr}) format('woff2');
-    }
-
-    @font-face {
-        font-family: 'Inter';
-        font-style:  normal;
-        font-weight: bold;
-        src: url(data:font/woff2;charset=utf-8;base64,${bold}) format('woff2');
-    }
-
-    @font-face {
-        font-family: 'Vera';
-        font-style: normal;
-        font-weight: normal;
-        src: url(data:font/woff2;charset=utf-8;base64,${mono})  format("woff2");
-      }
+    @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+Mono&family=Noto+Sans+SC:wght@400;700&display=swap');
 
     body {
         background: ${background};
@@ -55,8 +31,8 @@ function getCss(theme: string, fontSize: string) {
     }
 
     code {
-        color: #D400FF;
-        font-family: 'Vera';
+        color: #2E5C6E;
+        font-family: 'Noto Sans Mono', 'Noto Sans SC', monospace;
         white-space: pre-wrap;
         letter-spacing: -5px;
     }
@@ -93,13 +69,23 @@ function getCss(theme: string, fontSize: string) {
         margin: 0 .05em 0 .1em;
         vertical-align: -0.1em;
     }
-    
+
     .heading {
-        font-family: 'Inter', sans-serif;
+        font-family: 'Noto Sans SC', sans-serif;
         font-size: ${sanitizeHtml(fontSize)};
         font-style: normal;
         color: ${foreground};
         line-height: 1.8;
+    }
+
+    .subheading {
+        font-family: 'Noto Sans SC', sans-serif;
+        font-size: 48px;
+        position: absolute;
+        left: 64px;
+        bottom: 64px;
+        color: ${radial};
+        line-height: 1.2;
     }`;
 }
 
@@ -125,6 +111,8 @@ export function getHtml(parsedReq: ParsedRequest) {
             <div class="heading">${emojify(
                 md ? marked(text) : sanitizeHtml(text)
             )}
+            <div class="subheading">
+                Yuchen Cheng's Blog
             </div>
         </div>
     </body>
